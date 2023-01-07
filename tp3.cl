@@ -82,21 +82,21 @@
   
 
 (defparameter *baseregles_pathologie*
-  '((R1 ((> Hematies 5500000) (eq sejour_altitude non )) (eq pathologie Polyglobulie))
+  '((R1 ((eq sexe 'homme)(> Hematies 5500000) (eq sejour_altitude non )) (eq pathologie Polyglobulie))
     (R2 ((eq pathologie Polyglobulie) (eq pathologie Insuffisance_renale)) (eq pathologie Cancer_du_rein))
     (R3 ((eq pathologie Polyglobulie)) (eq pathologie Polyglobulie_idiopathique_ou_primitive))
-    (R4 ((< Hematies 4500000)) (eq pathologie Anemie))
+    (R4 ((eq sexe 'homme)(< Hematies 4500000)) (eq pathologie Anemie))
     (R5 ((eq pathologie Anemie) (eq VGM normal) (eq CCMH normal)) (eq pathologie Anemie_normochrome))
     (R6 ((eq pathologie Anemie_normochrome) (< Reticulo 40)) (eq pathologie Anemie_normochrome_aregenerative))
     (R7 ((eq pathologie Anemie_normochrome_aregenerative) (eq chimiotherapie non)) (eq pathologie Cancer_du_sang))
     (R8 ((eq pathologie Anemie_normochrome) (> Reticulo 130000)) (eq pathologie Anemie_normochrome_regenerative))
     (R9 ((eq pathologie Anemie_normochrome_regenerative) (eq saignement non) (eq chirurgie_recente oui)) (eq pathologie Maladie_auto-immune))
-    (R10 ((eq pathologie Anemie) (< Hemoglobine 13) (< VGM 80)) (eq pathologie Anmie_microcytaire))
+    (R10 ((eq sexe 'homme)(eq pathologie Anemie) (< Hemoglobine 13) (< VGM 80)) (eq pathologie Anmie_microcytaire))
     (R11 ((eq pathologie Anemie_microcytaire) (< CCMH 32)) (eq pathologie Anemie_microcytaire_hypochrome))
     (R12 ((eq pathologie Anemie_microcytaire_hypochrome)) (eq pathologie Carence_alimentaire_en_Fer_ou_saignement_chronique))
     (R13 ((eq pathologie Anemie_microcytaire) (eq CCMH normal)) (eq pathologie Anemie_microcytaire_normochrome))
     (R14 ((eq pathologie Anemie_microcytaire_normochrome)) (eq pathologie Thalassemie))
-    (R15 ((< Hematies 4500000) (< Hemoglobine 13) (> VGM 100)) (eq pathologie Anemie_macrocytaire))
+    (R15 ((eq sexe 'homme)(< Hematies 4500000) (< Hemoglobine 13) (> VGM 100)) (eq pathologie Anemie_macrocytaire))
     (R16 ((eq pathologie Anemie_macrocytaire) (eq Dosage_B12 oui )) (eq pathologie Cancer_du_sang))
     (R17 ((eq pathologie Anemie_macrocytaire) (eq Dosage_B12 non)) (eq pathologie Carence_alimentaire_en_B12))
     (R18 ((> Leucocytes 10000) (> Eosinophiles 700) (eq signes_allergiques oui)) (eq pathologie Allergie))
@@ -111,13 +111,19 @@
     (R27 ((eq Leucocytes normal) (> Monocytes 1000)) (eq pathologie Cancer_du_sang))
     (R28 ((eq Leucocytes normal) (> Lymphocytes 4000)) (eq pathologie Cancer_du_sang))
     (R29 ((> Glycemie_a_jeun 1.06)) (eq pathologie Diabete))
-    (R30 ((< Plaquettes 150000) (< Hematies 4500000)) (eq pathologie Cancer_du_sang))
+    (R30 ((eq sexe 'homme)(< Plaquettes 150000) (< Hematies 4500000)) (eq pathologie Cancer_du_sang))
     (R31 ((> DFG 60)) (eq pathologie Insuffisance_renale))
     (R32 ((> TGO 35) (> TGP 35) (eq Troponine normal)) (eq pathologie Hepatite))
     (R33 ((eq pathologie Hepatite) (> CRP 5)) (eq pathologie Hepatite_infectieuse))
     (R34 ((eq pathologie Hepatite) (eq CRP normal) (eq Gamma_GT normal)) (eq pathologie Hepatite_medicamenteuse))
     (R35 ((eq pathologie Hepatite) (eq CRP normal) (> Gamma_GT 38)) (eq pathologie Hepatite_alcoolique))
-    (R36 ((> TGO 35) (> TGP 35) (> Troponine 0.04)) (eq pathologie Infarctus))))
+    (R36 ((> TGO 35) (> TGP 35) (> Troponine 0.04)) (eq pathologie Infarctus))
+    ;regles pour femmes
+    (R37 ((eq sexe 'femme)(> Hematies 5000000) (eq sejour_altitude non )) (eq pathologie Polyglobulie))
+    (R38 ((eq sexe 'femme)(< Hematies 4000000)) (eq pathologie Anemie))
+    (R39 ((eq sexe 'femme)(eq pathologie Anemie) (< Hemoglobine 12) (< VGM 80)) (eq pathologie Anmie_microcytaire))
+    (R40 ((eq sexe 'femme)(< Hematies 4000000) (< Hemoglobine 12) (> VGM 100)) (eq pathologie Anemie_macrocytaire))
+    (R41 ((eq sexe 'femme)(< Plaquettes 150000) (< Hematies 4500000)) (eq pathologie Cancer_du_sang))
 
 
 
