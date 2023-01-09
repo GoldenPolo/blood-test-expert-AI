@@ -158,19 +158,19 @@
               (progn
                 (format t "~%Rentrez sa valeur ~%")
                 (push (list (car x) (read)) *basefaits*)))))
-    (format t "~%Avez-vous fait un séjour en altitude récemment ? ~%")
+    (format t "~%A-t-il fait un séjour en altitude récemment ? ~%")
     (push (list 'sejour_en_altitude (read)) *basefaits*)
-    (format t "~%Faites-vous de la chimiothérapie actuellement ? ~%")
+    (format t "~%Fait-il de la chimiothérapie actuellement ? ~%")
     (push (list 'chimiotherapie (read)) *basefaits*)
-    (format t "~%Avez-vous eu des saignements récents ? ~%")
+    (format t "~%A-t-il eu des saignements récents ? ~%")
     (push (list 'saignement (read)) *basefaits*)
-    (format t "~%Avez-vous eu une chirurgie récemment ? ~%")
+    (format t "~%A-t-il eu une chirurgie récemment ? ~%")
     (push (list 'chirurgie_recente (read)) *basefaits*)
-    (format t "~%Suivez-vous un traitement avec un dosage B12 ? ~%")
+    (format t "~%Suit-il un traitement avec un dosage B12 ? ~%")
     (push (list 'dosage_B12 (read)) *basefaits*)
-    (format t "~%Avez-vous eu des signes d'allergies récemment ? ~%")
+    (format t "~%A-t-il eu des signes d'allergies récemment ? ~%")
     (push (list 'signes_allergiques (read)) *basefaits*)
-    (format t "~%Avez-vous à nous signaler une autre pathologie pour laquelle vous êtes suivis ? ~%")
+    (format t "~%Avez-vous à nous signaler une autre pathologie pour laquelle il est suivi ? ~%")
     (if (eq (read) 'oui)
         (progn
           (format t "~%Rentrez le nom de la pathologie, en n'oubliant pas la majuscule ~%")
@@ -208,8 +208,7 @@
   (unless
       (eql :inconnu (cdr (assoc but *basefaits*)))
       (format t "Connaissez vous la valeur de ~s ? sinon tapez inconnu~%" but)
-      (push (list but (read)) *basefaits*))
-  *basefaits*)
+      (push (list but (read)) *basefaits*)))
 
            
 (defun verifier_ou (but but1 bdR &optional (i 0))
@@ -248,7 +247,7 @@
   (progn
     (format t "Veuillez rentrer les infos concernant le patient ~%")
     (create_patient)
-    (format t "~%Veuillez à présent rentrer les différentes constantes obtenues après l'analyse de sang ~%")
+    (format t "~%Veuillez à présent rentrer les différentes informations nécessaires si vous les connaissez ~%")
     (create_bdf)
     (format t "~%Quelle est la pathologie soupçonnée ? ~%")
     (setq but (list 'eq 'pathologie (read)))
@@ -300,7 +299,7 @@
   (let ((valeur (caadr regle)))
     (if valeur
         (if (eq valeur but)
-           (format t "Pour la pathologie ~A , nous vous conseillons de prendre rendez-vous chez le spécialiste suivant : ~A~%" valeur (car (cclRegle regle)))
+           (format t "Pour la pathologie ~A , nous lui conseillons de prendre rendez-vous chez le spécialiste suivant : ~A~%" valeur (car (cclRegle regle)))
          )))) ;; le eval ne fonctionne pas avec eq : (eval (list (car but) valeur (caddr but))))))
 
 
@@ -320,11 +319,37 @@
   (loop for x in bdr do ;; pout toutes les regles dans la bdr
         (check-rule x)) ;; on effectue la fonction check-rule
   (if (eq *cclvalide* nil)
-      (format t "Tout va bien, mais nous vous conseillons de ne pas oublier de prendre rendez-vous chez votre médecin traitant ~%")
+      (format t "Tout va bien, mais nous lui conseillons de ne pas oublier de prendre rendez-vous chez son médecin traitant ~%")
     (progn
-      (format t "Vous avez potentiellement la ou les pathologies suivantes : ")
+      (format t "Le patient a potentiellement la ou les pathologies suivantes : ")
       (mapcar 'print *cclvalide*);; on print la liste des maladie possible
-      (format t "~%Nous vous conseillons de prendre rendez-vous chez le ou les spécialistes attribués ~%")
+      (format t "~%Nous lui conseillons de prendre rendez-vous chez le ou les spécialistes attribués ~%")
       (find_spe_all *baseregles_specialiste*)
     )))
       
+
+
+
+
+(defun chainage_avant (bdr) ;; déclenche le chainage-avant
+  (setq *basefaits* '())
+  (setq *cclvalide* '()) ;; on clear la liste des pathologie possible à chaque appel de la fonction
+  (progn
+    (format t "Veuillez rentrer les infos concernant le patient ~%")
+    (create_patient)
+    (format t "~%Veuillez à présent rentrer les différentes informations nécessaires si vous les connaissez ~%")
+    (create_bdf)  
+  (loop for x in bdr do ;; pout toutes les regles dans la bdr
+        (check-rule x)) ;; on effectue la fonction check-rule
+  (if (eq *cclvalide* nil)
+      (format t "Tout va bien, mais nous lui conseillons de ne pas oublier de prendre rendez-vous chez son médecin traitant ~%")
+    (progn
+      (format t "Le patient a potentiellement la ou les pathologies suivantes : ")
+      (mapcar 'print *cclvalide*);; on print la liste des maladie possible
+      (format t "~%Nous lui conseillons de prendre rendez-vous chez le ou les spécialistes attribués ~%")
+      (find_spe_all *baseregles_specialiste*)
+    ))))
+      
+
+
+
