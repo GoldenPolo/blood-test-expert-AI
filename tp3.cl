@@ -261,14 +261,6 @@
         (chainage_avant *baseregles_pathologie*)))))
       
     
-    
-    
-(setq *basefaits* '((sexe homme) (Leucocytes normal) (Monocytes 1056) (Troponine normal) (chimiotherapie non) (pathologie Allergie) (TGP 40) (TGO 37)))
-(setq *basefaits* nil)
-
-
-
-
 ---------------------------------------------------------------------------
 ----------------------------chainage-avant---------------------------------
 ---------------------------------------------------------------------------
