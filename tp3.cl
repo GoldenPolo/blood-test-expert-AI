@@ -121,12 +121,12 @@
 
 ;;Fonctions secondaires
 
-(defun cclRegle (regle) (caddr regle))
-(defun premisseRegle (regle) (cadr regle))
-(defun numRegle (regle) (car regle))
+(defun cclRegle (regle) (caddr regle)) ;;prend la conclusion d'une règle
+(defun premisseRegle (regle) (cadr regle)) ;;prend les prémisses d'une règle
+(defun numRegle (regle) (car regle)) ;;prend le numéro d'une règle
 
 
-(defun create_patient ()
+(defun create_patient () ;; créer le patient et stocke les données dans la base de faits
   (progn
     (format t "Connaissez-vous le sexe du patient ? ~%")
     (if (eq (read) 'oui)
@@ -150,7 +150,7 @@
           (push (list 'taille (read)) *basefaits*)))))
     
 
-(defun create_bdf ()
+(defun create_bdf () ;; créer la base de faits d'après les résultats de l'analyse de sang
   (progn
     (loop for x in *normes* do
         (progn
@@ -178,18 +178,18 @@
           (push (list 'pathologie (read)) *basefaits*)))))
 
 
-(defun appartient (but)
+(defun appartient (but) ;; vérifie que le but en paramètre se trouve dans la base de faits
   ;; but est de la forme: (comparateur attribut valeur)
   (let ((valeur (cadr (assoc (cadr but) *basefaits*))))
     (if valeur
-        (if (or (and (eq valeur 'normal) (not (eq (caddr but) 'normal))) (and (eq valeur 'inconnu) (not (eq (caddr but) 'inconnu))))
+        (if (or (and (eq valeur 'normal) (not (eq (caddr but) 'normal))) (and (eq valeur 'inconnu) (not (eq (caddr but) 'inconnu)))) ;;si la valeur est 'normal ou 'inconnu mais que le caddr du but n'est pas 'normal ou 'inconnu alors renvoie nil
             nil
           (funcall (car but) valeur (caddr but))
           )))) ;; le eval ne fonctionne pas avec eq : (eval (list (car but) valeur (caddr but))))))
 
 
 
-(defun regles_candidates (but bdr) ;; (eq moyen voiture) // (> age 18) 
+(defun regles_candidates (but bdr) ;; (eq moyen voiture) // (> age 18) ;; retourne les règles dont le but correspond à la conclusion de cette règle
   ;;(print bdr)
   (if bdr
       (let* ((conclusion (cclRegle (car bdr))) ;; R1 (eq moyen voiture) // Rx (> age 20)
@@ -205,14 +205,14 @@
           (regles_candidates but (cdr bdr))))))
 
   
-(defun question-utilisateur (but)
+(defun question-utilisateur (but) ;; demande si on connait la valeur d'une données puis la push dans la base de faits
   (unless
       (eql :inconnu (cdr (assoc but *basefaits*)))
       (format t "Connaissez vous la valeur de ~s ? sinon tapez inconnu~%" but)
       (push (list but (read)) *basefaits*)))
 
            
-(defun verifier_ou (but but1 bdR &optional (i 0))
+(defun verifier_ou (but but1 bdR &optional (i 0)) ;;regarde si une regle est verifiée
   (let ((ok nil))
     (OR
      (if (appartient but) ;; ici on remplacer le member par appartient
@@ -233,7 +233,7 @@
 
     )))
 
-(defun verifier_et (regle but1 bdR i)
+(defun verifier_et (regle but1 bdR i) ;;regarde si les éléments de la prémisse de la règle en paramètre sont vrais
   (let ((ok t) (premisses (premisseRegle regle)))
     (while (and premisses ok)
       (format t "~V@t  ~t VERIFIE_ET ~s premisse ~A~%" (+ 1 i) (numRegle regle) (car premisses))
@@ -243,7 +243,7 @@
 
 ;;Fonction principale
 
-(defun chainage-arriere (bdr)
+(defun chainage-arriere (bdr) ;; permet de lancer le chainage arrière
   (setq *basefaits* '())
   (progn
     (format t "Veuillez rentrer les infos concernant le patient ~%")
@@ -259,7 +259,7 @@
       (progn
         (format t "~%La pathologie soupçonnée n'est pas confirmer ~%")
         (format t "~%Nous vous orientons vers un programme qui permettra de déterminer la ou les pathologies exacts grâce au données que vous avez fourni ~%")
-        (chainage_avant *baseregles_pathologie*)))))
+        (chainage_avant *baseregles_pathologie*))))) ;;appelle le premier chainage avant dans le code
       
     
 ---------------------------------------------------------------------------
@@ -287,7 +287,7 @@
 
 
 
-(defun appartient2 (but regle)
+(defun appartient2 (but regle) ;; vérifie si le but en paramètre correspond à la prémisse de la règle (ici pour les spécialistes)
   ;; but est de la forme: (comparateur attribut valeur)
   (let ((valeur (caadr regle)))
     (if valeur
@@ -296,17 +296,17 @@
          )))) ;; le eval ne fonctionne pas avec eq : (eval (list (car but) valeur (caddr but))))))
 
 
-(defun find_specialiste (regle)
+(defun find_specialiste (regle) ;;vérifie pour toutes les pathologies dans une liste de pathologies possibles si elle correspond à la prémisse de la règle
   (loop for x in *cclvalide* do
         (appartient2 x regle)))
 
-(defun find_spe_all (bdr)
+(defun find_spe_all (bdr) ;;applique find_specialiste à toute la bdr
   (loop for x in bdr do
         (find_specialiste x)))
         
 
 ;;Fonction principale
-
+;;chainage avant quand utiliser avec chainage arriere
 (defun chainage_avant (bdr) ;; déclenche le chainage-avant
   (setq *cclvalide* '()) ;; on clear la liste des pathologie possible à chaque appel de la fonction
   (loop for x in bdr do ;; pout toutes les regles dans la bdr
@@ -323,7 +323,7 @@
 
 
 
-
+;; chainage avant quand utiliser seul
 (defun chainage_avant (bdr) ;; déclenche le chainage-avant
   (setq *basefaits* '())
   (setq *cclvalide* '()) ;; on clear la liste des pathologie possible à chaque appel de la fonction
