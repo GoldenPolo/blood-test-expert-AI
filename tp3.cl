@@ -111,6 +111,7 @@
     (R10 (Diabete) (Diabetologue))
     (R11 (Insuffisance_renale) (Nephrologue))
     (R12 (Hepatite) (Gastro-enterologue))
+    (R13 (Infarctus) (Cardiologue))
 ))
 
 ---------------------------------------------------------------------
